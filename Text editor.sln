@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Text editor", "Text editor\Text editor.csproj", "{5DB86F96-896C-4A57-84E2-B790FAC0748A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Based.UI", "Based.UI\Based.UI.csproj", "{656D3D33-5E0F-415E-8CCA-5DB5B81E9C14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5DB86F96-896C-4A57-84E2-B790FAC0748A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DB86F96-896C-4A57-84E2-B790FAC0748A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DB86F96-896C-4A57-84E2-B790FAC0748A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{656D3D33-5E0F-415E-8CCA-5DB5B81E9C14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{656D3D33-5E0F-415E-8CCA-5DB5B81E9C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{656D3D33-5E0F-415E-8CCA-5DB5B81E9C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{656D3D33-5E0F-415E-8CCA-5DB5B81E9C14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

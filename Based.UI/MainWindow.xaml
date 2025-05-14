@@ -1,0 +1,155 @@
+﻿<Window x:Class="Based.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Мій редактор" Height="600" Width="900"
+        Background="White">
+
+    <Window.Resources>
+        <!-- Стиль для Button -->
+        <Style x:Key="FlatButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+
+        <!-- Стиль для ToggleButton -->
+        <Style x:Key="FlatToggleButton" TargetType="ToggleButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+
+        <!-- Верхня стрічка -->
+        <TabControl DockPanel.Dock="Top" Height="140">
+            <TabItem Header="Головна">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                    <StackPanel Orientation="Horizontal">
+
+                        <!-- Файли -->
+                        <GroupBox Header="Файли" Margin="5">
+                            <StackPanel>
+                                <Button Style="{StaticResource FlatButton}" Content="Новий" Width="80"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Відкрити" Width="80"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Зберегти" Width="80"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Буфер обміну -->
+                        <GroupBox Header="Буфер обміну" Margin="5">
+                            <StackPanel>
+                                <Button Style="{StaticResource FlatButton}" Content="Вирізати" Width="80"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Копіювати" Width="80"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Вставити" Width="80"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Шрифт -->
+                        <GroupBox Header="Шрифт" Margin="5">
+                            <StackPanel>
+                                <ComboBox Width="120" Name="FontFamilyBox" Margin="2"/>
+                                <ComboBox Width="60" Name="FontSizeBox" Margin="2"/>
+                                <WrapPanel>
+                                    <ToggleButton Style="{StaticResource FlatToggleButton}" Content="B" FontWeight="Bold" Width="30"/>
+                                    <ToggleButton Style="{StaticResource FlatToggleButton}" Content="I" FontStyle="Italic" Width="30"/>
+                                    <ToggleButton Style="{StaticResource FlatToggleButton}" Width="30">
+                                        <TextBlock Text="U" TextDecorations="Underline"/>
+                                    </ToggleButton>
+                                </WrapPanel>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Абзац -->
+                        <GroupBox Header="Абзац" Margin="5">
+                            <StackPanel>
+                                <WrapPanel>
+                                    <Button Style="{StaticResource FlatButton}" Content="Ліво" Width="40"/>
+                                    <Button Style="{StaticResource FlatButton}" Content="Центр" Width="50"/>
+                                    <Button Style="{StaticResource FlatButton}" Content="Право" Width="50"/>
+                                    <Button Style="{StaticResource FlatButton}" Content="Ширина" Width="60"/>
+                                </WrapPanel>
+                                <WrapPanel>
+                                    <Button Style="{StaticResource FlatButton}" Content="●" Width="30"/>
+                                    <Button Style="{StaticResource FlatButton}" Content="1." Width="30"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Вставлення -->
+                        <GroupBox Header="Вставлення" Margin="5">
+                            <StackPanel>
+                                <Button Style="{StaticResource FlatButton}" Content="Зображення" Width="100"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Дата і час" Width="100"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Спец. символ" Width="100" Click="Button_Click"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Вигляд -->
+                        <GroupBox Header="Вигляд" Margin="5">
+                            <StackPanel>
+                                <Button Style="{StaticResource FlatButton}" Content="Збільшити" Width="90"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Зменшити" Width="90"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Показати/Сховати панелі" Width="140"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <!-- Основна область з текстом -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <RichTextBox Name="Editor"
+                         Grid.Row="0"
+                         Margin="10"
+                         VerticalScrollBarVisibility="Auto"
+                         AcceptsTab="True"
+                         SelectionChanged="Editor_SelectionChanged"/>
+
+            <!-- Статусбар -->
+            <DockPanel Grid.Row="1" LastChildFill="True">
+                <StatusBar Name="MainStatusBar" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                    <StatusBarItem>
+                        <TextBlock Name="StatusText"
+                                   Text="Символів: 0 | Слів: 0 | Рядок: 1 | Колонка: 1 | INS"/>
+                    </StatusBarItem>
+                </StatusBar>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>
+
