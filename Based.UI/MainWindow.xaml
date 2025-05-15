@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Based.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Мій редактор" Height="600" Width="900"
+        Title="Мій редактор" Height="1000" Width="1200"
         Background="White">
 
     <Window.Resources>
@@ -78,9 +78,9 @@
                                 <ComboBox Width="120" Name="FontFamilyBox" Margin="2"/>
                                 <ComboBox Width="60" Name="FontSizeBox" Margin="2"/>
                                 <WrapPanel>
-                                    <ToggleButton Style="{StaticResource FlatToggleButton}" Content="B" FontWeight="Bold" Width="30"/>
-                                    <ToggleButton Style="{StaticResource FlatToggleButton}" Content="I" FontStyle="Italic" Width="30"/>
-                                    <ToggleButton Style="{StaticResource FlatToggleButton}" Width="30">
+                                    <ToggleButton x:Name="BoldButton" Style="{StaticResource FlatToggleButton}" Content="B" FontWeight="Bold" Width="30"/>
+                                    <ToggleButton x:Name="ItalicButton" Style="{StaticResource FlatToggleButton}" Content="I" FontStyle="Italic" Width="30"/>
+                                    <ToggleButton x:Name="UnderlineButton" Style="{StaticResource FlatToggleButton}" Width="30">
                                         <TextBlock Text="U" TextDecorations="Underline"/>
                                     </ToggleButton>
                                 </WrapPanel>
@@ -108,7 +108,7 @@
                             <StackPanel>
                                 <Button Style="{StaticResource FlatButton}" Content="Зображення" Width="100"/>
                                 <Button Style="{StaticResource FlatButton}" Content="Дата і час" Width="100"/>
-                                <Button Style="{StaticResource FlatButton}" Content="Спец. символ" Width="100" Click="Button_Click"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Спец. символ" Width="100"/>
                             </StackPanel>
                         </GroupBox>
 
