@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using Microsoft.Win32;
+using System.Data;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -108,60 +110,99 @@ namespace Based.UI
 
         private void InsertBtn(object sender, RoutedEventArgs e)
         {
-            Editor.AppendText(Clipboard.GetText());
+            if (!Clipboard.ContainsText())
+                return; // Нічого вставляти  
+
+            // Якщо виділення порожнє — вставляємо в позиції курсору  
+            TextSelection sel = Editor.Selection;
+            sel.Text = Clipboard.GetText();
         }
 
         private void CopyBtn(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(Editor.Selection.Text);
+            if (Editor.Selection != null && !string.IsNullOrEmpty(Editor.Selection.Text))
+            {
+                Clipboard.SetText(Editor.Selection.Text);
+            }
         }
 
         private void CutOutBtn(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(Editor.Selection.Text);
-            Editor.Selection.Text = "";
+            if (Editor.Selection != null && !string.IsNullOrEmpty(Editor.Selection.Text))
+            {
+                Clipboard.SetText(Editor.Selection.Text);
+                Editor.Selection.Text = "";
+            }
         }
         //Статусбар
         private void UpdateStatusBar(object sender, RoutedEventArgs e)
         {
             TextRange textRange = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
-
             string text = textRange.Text;
-            int CharCount = text.TrimEnd('\r','\n').Length;
+            int CharCount = text.TrimEnd('\r', '\n').Length;
             int WordCount = string.IsNullOrWhiteSpace(text) ? 0 : text.Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Length;
 
+            // Отримати позицію каретки
             TextPointer caret = Editor.CaretPosition;
-            TextPointer start = Editor.Document.ContentStart;
 
-            int line = 1, column = 1;
-            TextPointer pointer = start;
-            while (pointer != null && pointer.CompareTo(caret) < 0)
+            // Визначити номер рядка
+            int line = 1;
+            TextPointer lineStart = Editor.Document.ContentStart.GetLineStartPosition(0);
+            int result = 0;
+            while (true)
             {
-                if (pointer.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+                TextPointer nextLineStart = lineStart.GetLineStartPosition(1, out result);
+                if (result == 0 || nextLineStart == null || nextLineStart.CompareTo(caret) > 0)
+                    break;
+                line++;
+                lineStart = nextLineStart;
+            }
+
+
+            StatusText.Text = $"Символів: {CharCount} | Слів: {WordCount} | Рядок: {line}";
+        }
+        //Файли
+        private void NewFileBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Editor.Document.Blocks.Clear();
+        }
+
+        private void OpenFileBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Rich Text Format (*.rtf)|*.rtf|Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+                using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open))
                 {
-                    string runText = pointer.GetTextInRun(LogicalDirection.Forward);
-                    for (int i = 0; i < runText.Length && pointer.CompareTo(caret) < 0; i++)
-                    {
-                        if (runText[i] == '\n')
-                        {
-                            line++;
-                            column = 1;
-                        }
-                        else
-                        {
-                            column++;
-                        }
-                        pointer = pointer.GetPositionAtOffset(1, LogicalDirection.Forward);
-                        if (pointer == null || pointer.CompareTo(caret) >= 0)
-                            break;
-                    }
-                }
-                else
-                {
-                    pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
+                    if (System.IO.Path.GetExtension(openFileDialog.FileName).ToLower() == ".rtf")
+                        range.Load(fs, DataFormats.Rtf);
+                    else
+                        range.Load(fs, DataFormats.Text);
                 }
             }
-            StatusText.Text = $"Символів: {CharCount} | Слів: {WordCount} | Рядок: {line} | Колонка: {column}";
+        }
+
+        private void SaveFileBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Rich Text Format (*.rtf)|*.rtf|Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+                using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                {
+                    if (System.IO.Path.GetExtension(saveFileDialog.FileName).ToLower() == ".rtf")
+                        range.Save(fs, DataFormats.Rtf);
+                    else
+                        range.Save(fs, DataFormats.Text);
+                }
+            }
         }
     }
 }
