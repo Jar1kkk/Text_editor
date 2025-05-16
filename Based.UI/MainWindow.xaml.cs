@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Data;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -35,6 +36,10 @@ namespace Based.UI
             UnderlineButton.Click += UnderlineButton_Click;
 
             Editor.SelectionChanged += Editor_SelectionChanged;
+
+            //Статусбар
+            Editor.SelectionChanged += UpdateStatusBar;
+            Editor.TextChanged += UpdateStatusBar;
         }
 
         private void FontFamilyBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -96,10 +101,10 @@ namespace Based.UI
             if (sz is double s) FontSizeBox.SelectedItem = s;
         }
 
-        private void Editor_SelectionChanged(object sender, RoutedEventArgs e)
-        {
+        //private void Editor_SelectionChanged(object sender, RoutedEventArgs e)
+        //{
 
-        }
+        //}
 
         private void InsertBtn(object sender, RoutedEventArgs e)
         {
@@ -115,6 +120,48 @@ namespace Based.UI
         {
             Clipboard.SetText(Editor.Selection.Text);
             Editor.Selection.Text = "";
+        }
+        //Статусбар
+        private void UpdateStatusBar(object sender, RoutedEventArgs e)
+        {
+            TextRange textRange = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+
+            string text = textRange.Text;
+            int CharCount = text.TrimEnd('\r','\n').Length;
+            int WordCount = string.IsNullOrWhiteSpace(text) ? 0 : text.Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Length;
+
+            TextPointer caret = Editor.CaretPosition;
+            TextPointer start = Editor.Document.ContentStart;
+
+            int line = 1, column = 1;
+            TextPointer pointer = start;
+            while (pointer != null && pointer.CompareTo(caret) < 0)
+            {
+                if (pointer.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+                {
+                    string runText = pointer.GetTextInRun(LogicalDirection.Forward);
+                    for (int i = 0; i < runText.Length && pointer.CompareTo(caret) < 0; i++)
+                    {
+                        if (runText[i] == '\n')
+                        {
+                            line++;
+                            column = 1;
+                        }
+                        else
+                        {
+                            column++;
+                        }
+                        pointer = pointer.GetPositionAtOffset(1, LogicalDirection.Forward);
+                        if (pointer == null || pointer.CompareTo(caret) >= 0)
+                            break;
+                    }
+                }
+                else
+                {
+                    pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
+                }
+            }
+            StatusText.Text = $"Символів: {CharCount} | Слів: {WordCount} | Рядок: {line} | Колонка: {column}";
         }
     }
 }
