@@ -1,8 +1,10 @@
 ﻿<Window x:Class="Based.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Мій редактор" Height="1000" Width="1200"
+        Title="Мій редактор" Height="1000" Width="1000"
         Background="White">
+    
+
 
     <Window.Resources>
         <!-- Стиль для Button -->
@@ -57,9 +59,9 @@
                         <!-- Файли -->
                         <GroupBox Header="Файли" Margin="5">
                             <StackPanel>
-                                <Button Style="{StaticResource FlatButton}" Content="Новий" Width="80"/>
-                                <Button Style="{StaticResource FlatButton}" Content="Відкрити" Width="80"/>
-                                <Button Style="{StaticResource FlatButton}" Content="Зберегти" Width="80"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Новий" Width="80" Click="NewFileBtn_Click"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Відкрити" Width="80" Click="OpenFileBtn_Click"/>
+                                <Button Style="{StaticResource FlatButton}" Content="Зберегти" Width="80" Click="SaveFileBtn_Click"/>
                             </StackPanel>
                         </GroupBox>
 
@@ -145,7 +147,7 @@
                 <StatusBar Name="MainStatusBar" DockPanel.Dock="Right" HorizontalAlignment="Right">
                     <StatusBarItem>
                         <TextBlock Name="StatusText"
-                                   Text="Символів: 0 | Слів: 0 | Рядок: 1 | Колонка: 1 | INS"/>
+                                   Text="Символів: 0 | Слів: 0 | Рядок: 1"/>
                     </StatusBarItem>
                 </StatusBar>
             </DockPanel>
