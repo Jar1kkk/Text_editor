@@ -91,14 +91,14 @@
                         <GroupBox Header="Абзац" Margin="5">
                             <StackPanel>
                                 <WrapPanel>
-                                    <Button Style="{StaticResource FlatButton}" Content="Ліво" Width="40"/>
-                                    <Button Style="{StaticResource FlatButton}" Content="Центр" Width="50"/>
-                                    <Button Style="{StaticResource FlatButton}" Content="Право" Width="50"/>
-                                    <Button Style="{StaticResource FlatButton}" Content="Ширина" Width="60"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="LeftBtn" Content="Ліво" Width="40"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="CenterBtn" Content="Центр" Width="50"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="RightBtn" Content="Право" Width="50"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="JustifyBtn" Content="Ширина" Width="60"/>
                                 </WrapPanel>
                                 <WrapPanel>
-                                    <Button Style="{StaticResource FlatButton}" Content="●" Width="30"/>
-                                    <Button Style="{StaticResource FlatButton}" Content="1." Width="30"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="Bulleted_NumberingBtn" Content="●" Width="30"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="Numerical_NumberingBtn" Content="1." Width="30"/>
                                 </WrapPanel>
                             </StackPanel>
                         </GroupBox>
