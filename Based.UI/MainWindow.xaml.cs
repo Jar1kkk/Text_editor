@@ -25,5 +25,26 @@ namespace Based.UI
         {
 
         }
+
+        private void Editor_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void InsertBtn(object sender, RoutedEventArgs e)
+        {
+            Editor.AppendText(Clipboard.GetText());
+        }
+
+        private void CopyBtn(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(Editor.Selection.Text);
+        }
+
+        private void CutOutBtn(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(Editor.Selection.Text);
+            Editor.Selection.Text = "";
+        }
     }
 }
