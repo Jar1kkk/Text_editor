@@ -66,9 +66,9 @@
                         <!-- Буфер обміну -->
                         <GroupBox Header="Буфер обміну" Margin="5">
                             <StackPanel>
-                                <Button Style="{StaticResource FlatButton}" Content="Вирізати" Width="80"/>
-                                <Button Style="{StaticResource FlatButton}" Content="Копіювати" Width="80"/>
-                                <Button Style="{StaticResource FlatButton}" Content="Вставити" Width="80"/>
+                                <Button Style="{StaticResource FlatButton}" Click="CutOutBtn" Content="Вирізати"  Width="80"/>
+                                <Button Style="{StaticResource FlatButton}" Click="CopyBtn"   Content="Копіювати" Width="80"/>
+                                <Button Style="{StaticResource FlatButton}" Click="InsertBtn" Content="Вставити"  Width="80"/>
                             </StackPanel>
                         </GroupBox>
 

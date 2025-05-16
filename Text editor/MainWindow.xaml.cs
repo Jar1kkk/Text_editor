@@ -24,5 +24,6 @@ namespace Text_editor
         {
             InitializeComponent();
         }
+
     }
 }
