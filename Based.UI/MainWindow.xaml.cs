@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -15,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Image = System.Windows.Controls.Image;
 
 namespace Based.UI
 {
@@ -266,10 +268,16 @@ namespace Based.UI
         //Вигляд
         private void Increase_Click(object sender, RoutedEventArgs e)
         {
+            if (Editor.FontSize >= 72)
+                return;
+
             Editor.FontSize += 2;
         }
         private void Reduce_Click(object sender, RoutedEventArgs e)
         {
+            if(Editor.FontSize <= 8)
+                return;
+
             Editor.FontSize -= 2;
         }
         private void Hide_Click(object sender, RoutedEventArgs e)
@@ -279,6 +287,52 @@ namespace Based.UI
         private void Show_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             Tab.Height = 140;
+        }
+
+        //Вставлення
+        private void Image_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    string filePath = dialog.FileName;
+                    if (File.Exists(filePath))
+                    {
+                        BitmapImage bitmap = new BitmapImage(new Uri(filePath));
+
+                        Clipboard.SetImage(bitmap);
+
+                        if (Clipboard.ContainsImage())
+                            Editor.Paste();
+
+                        Paragraph paragraph = new Paragraph();
+                        Editor.Document.Blocks.Add(paragraph);
+                        Editor.CaretPosition = paragraph.ContentEnd;
+                        Editor.AppendText("\n");
+                        Editor.Focus();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Файл не знайдено.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Помилка при додаванні зображення: {ex.Message}");
+                }
+            }
+
+        }
+        private void DateTime_Click(object sender, RoutedEventArgs e)
+        {
+            Editor.CaretPosition.InsertTextInRun(DateTime.Now.ToString(" dd.MM.yyyy - HH:mm:ss "));
+        }
+        private void SpecialСharacter_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("charmap.exe");
         }
     }
 }
