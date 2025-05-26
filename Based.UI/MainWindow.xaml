@@ -57,9 +57,9 @@
                         <!-- Файли -->
                         <GroupBox Header="Файли" Margin="5">
                             <StackPanel>
-                                <Button Style="{StaticResource FlatButton}" Content="Новий" Width="80"/>
-                                <Button Style="{StaticResource FlatButton}" Content="Відкрити" Width="80"/>
-                                <Button Style="{StaticResource FlatButton}" Content="Зберегти" Width="80"/>
+                                <Button Style="{StaticResource FlatButton}" Click="NewFileBtn_Click" Content="Новий" Width="80"/>
+                                <Button Style="{StaticResource FlatButton}" Click="OpenFileBtn_Click" Content="Відкрити" Width="80"/>
+                                <Button Style="{StaticResource FlatButton}" Click="SaveFileBtn_Click" Content="Зберегти" Width="80"/>
                             </StackPanel>
                         </GroupBox>
 
