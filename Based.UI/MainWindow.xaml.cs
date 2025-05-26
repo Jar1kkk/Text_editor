@@ -224,6 +224,9 @@ namespace Based.UI
                 var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
                 using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
                 {
+                    FileName = saveFileDialog.FileName;
+                    Writer();
+
                     if (System.IO.Path.GetExtension(saveFileDialog.FileName).ToLower() == ".rtf")
                         range.Save(fs, DataFormats.Rtf);
                     else
