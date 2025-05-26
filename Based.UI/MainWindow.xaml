@@ -106,9 +106,9 @@
                         <!-- Вставлення -->
                         <GroupBox Header="Вставлення" Margin="5">
                             <StackPanel>
-                                <Button Style="{StaticResource FlatButton}" Content="Зображення" Width="100"/>
-                                <Button Style="{StaticResource FlatButton}" Content="Дата і час" Width="100"/>
-                                <Button Style="{StaticResource FlatButton}" Content="Спец. символ" Width="100"/>
+                                <Button Style="{StaticResource FlatButton}" Click="Image_Click" Content="Зображення" Width="100"/>
+                                <Button Style="{StaticResource FlatButton}" Click="DateTime_Click" Content="Дата і час" Width="100"/>
+                                <Button Style="{StaticResource FlatButton}" Click="SpecialСharacter_Click" Content="Спец. символ" Width="100"/>
                             </StackPanel>
                         </GroupBox>
 
