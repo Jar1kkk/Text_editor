@@ -25,6 +25,8 @@ namespace Based.UI
         private int Number = 1;
 
         private string Text = "";
+        private string FileName = "";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -50,6 +52,8 @@ namespace Based.UI
             //Статусбар
             Editor.SelectionChanged += UpdateStatusBar;
             Editor.TextChanged += UpdateStatusBar;
+
+            OpenFileAtStartup();
         }
 
         //Шрифт
@@ -199,6 +203,9 @@ namespace Based.UI
                 var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
                 using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open))
                 {
+                    FileName = openFileDialog.FileName;
+                    Writer();
+
                     if (System.IO.Path.GetExtension(openFileDialog.FileName).ToLower() == ".rtf")
                         range.Load(fs, DataFormats.Rtf);
                     else
@@ -333,6 +340,48 @@ namespace Based.UI
         private void SpecialСharacter_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("charmap.exe");
+        }
+
+        //Відкриття файлу при запуску програми.
+        private void OpenFileAtStartup()
+        {
+            if (string.IsNullOrEmpty(Reading()))
+            {
+                return;
+            }
+
+            FileName = Reading();
+            var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+            using (FileStream fs = new FileStream(FileName, FileMode.Open))
+            {
+
+                if (System.IO.Path.GetExtension(FileName).ToLower() == ".rtf")
+                    range.Load(fs, DataFormats.Rtf);
+                else
+                    range.Load(fs, DataFormats.Text);
+            }
+        }
+        //Читання шляху файлу з файлу,
+        private string Reading()
+        {
+            using (FileStream fs = new FileStream("FileName_open.txt", FileMode.OpenOrCreate))
+            {
+                using (StreamReader reader = new StreamReader(fs, Encoding.UTF8))
+                {
+                    return reader.ReadLine();
+                }
+            }
+        }
+        //Запис шляху файлу в файл,
+        private void Writer()
+        {
+            using (FileStream fs = new FileStream("FileName_open.txt", FileMode.OpenOrCreate))
+            {
+                using (StreamWriter writer = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    writer.WriteLine(FileName);
+                }
+            }
         }
     }
 }
