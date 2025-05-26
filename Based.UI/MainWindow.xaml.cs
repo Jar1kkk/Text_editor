@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿using Microsoft.Win32;
+using System.Data;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -17,8 +21,6 @@ namespace Based.UI
     public partial class MainWindow : Window
     {
         private int Number = 1;
-        private bool IsNotNumbered = false;
-        private bool IsNumbered = false;
 
         private string Text = "";
         public MainWindow()
@@ -42,6 +44,10 @@ namespace Based.UI
             UnderlineButton.Click += UnderlineButton_Click;
 
             Editor.SelectionChanged += Editor_SelectionChanged;
+
+            //Статусбар
+            Editor.SelectionChanged += UpdateStatusBar;
+            Editor.TextChanged += UpdateStatusBar;
         }
 
         private void FontFamilyBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -103,23 +109,34 @@ namespace Based.UI
             if (sz is double s) FontSizeBox.SelectedItem = s;
         }
 
-
         private void InsertBtn(object sender, RoutedEventArgs e)
         {
-            if (Clipboard.ContainsText())
+            if (!Clipboard.ContainsText())
+                return;
+
+            string clipboardText = Clipboard.GetText();
+
+
+            if (!Editor.Selection.IsEmpty)
             {
-                Editor.CaretPosition.InsertTextInRun(Clipboard.GetText());
+                Editor.Selection.Text = clipboardText;
                 string text = Clipboard.GetText();
                 if (Text == text)
-                {
                     Clipboard.SetText("");
-                }
+
             }
             else
-                return;
+            {
+
+                Editor.CaretPosition.InsertTextInRun(clipboardText);
+            }
         }
         private void CopyBtn(object sender, RoutedEventArgs e)
         {
+            if (Editor.Selection != null && !string.IsNullOrEmpty(Editor.Selection.Text))
+            {
+                Clipboard.SetText(Editor.Selection.Text);
+            }
             try
             {
                 Clipboard.SetText(Editor.Selection.Text);
@@ -131,6 +148,82 @@ namespace Based.UI
         }
         private void CutOutBtn(object sender, RoutedEventArgs e)
         {
+            if (Editor.Selection != null && !string.IsNullOrEmpty(Editor.Selection.Text))
+            {
+                Clipboard.SetText(Editor.Selection.Text);
+                Text = Editor.Selection.Text;
+                Editor.Selection.Text = "";
+            }
+        }
+        //Статусбар
+        private void UpdateStatusBar(object sender, RoutedEventArgs e)
+        {
+            TextRange textRange = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+            string text = textRange.Text;
+            int CharCount = text.TrimEnd('\r', '\n').Length;
+            int WordCount = string.IsNullOrWhiteSpace(text) ? 0 : text.Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Length;
+
+            // Отримати позицію каретки
+            TextPointer caret = Editor.CaretPosition;
+
+            // Визначити номер рядка
+            int line = 1;
+            TextPointer lineStart = Editor.Document.ContentStart.GetLineStartPosition(0);
+            int result = 0;
+            while (true)
+            {
+                TextPointer nextLineStart = lineStart.GetLineStartPosition(1, out result);
+                if (result == 0 || nextLineStart == null || nextLineStart.CompareTo(caret) > 0)
+                    break;
+                line++;
+                lineStart = nextLineStart;
+            }
+
+
+            StatusText.Text = $"Символів: {CharCount} | Слів: {WordCount} | Рядок: {line}";
+        }
+        //Файли
+        private void NewFileBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Editor.Document.Blocks.Clear();
+        }
+
+        private void OpenFileBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Rich Text Format (*.rtf)|*.rtf|Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+                using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open))
+                {
+                    if (System.IO.Path.GetExtension(openFileDialog.FileName).ToLower() == ".rtf")
+                        range.Load(fs, DataFormats.Rtf);
+                    else
+                        range.Load(fs, DataFormats.Text);
+                }
+            }
+        }
+
+        private void SaveFileBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Rich Text Format (*.rtf)|*.rtf|Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+                using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                {
+                    if (System.IO.Path.GetExtension(saveFileDialog.FileName).ToLower() == ".rtf")
+                        range.Save(fs, DataFormats.Rtf);
+                    else
+                        range.Save(fs, DataFormats.Text);
+                }
+            }
             Clipboard.SetText(Editor.Selection.Text);
             Text = Editor.Selection.Text;
             Editor.Selection.Text = "";
@@ -153,8 +246,6 @@ namespace Based.UI
             Editor.Selection.ApplyPropertyValue(Paragraph.TextAlignmentProperty, TextAlignment.Center);
 
         }
-
-
         private void Bulleted_NumberingBtn(object sender, RoutedEventArgs e)
         {
             Number = 1;
@@ -172,6 +263,5 @@ namespace Based.UI
             Editor.Focus();
             Number++;
         }
-
     }
 }
