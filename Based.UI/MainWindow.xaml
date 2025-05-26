@@ -1,17 +1,18 @@
 ﻿<Window x:Class="Based.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Мій редактор" Height="1000" Width="1200"
+        Title="Мій редактор" Height="1000" Width="900"
         Background="White">
 
     <Window.Resources>
-        <!-- Стиль для Button -->
         <Style x:Key="FlatButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="4"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -21,17 +22,21 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="Margin" Value="2"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FFE0E0E0"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
-        <!-- Стиль для ToggleButton -->
         <Style x:Key="FlatToggleButton" TargetType="ToggleButton">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="4"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
@@ -41,92 +46,104 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="Margin" Value="2"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FFE0E0E0"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="#FFB0B0B0"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
 
     <DockPanel>
-
-        <!-- Верхня стрічка -->
-        <TabControl Name="Tab" DockPanel.Dock="Top" Height="140">
-            <TabItem Header="Головна" MouseDoubleClick="Show_MouseDoubleClick" >
+        <TabControl Name="Tab" DockPanel.Dock="Top" Height="140" Background="LightGray">
+            <TabItem Header="Головна" MouseDoubleClick="Show_MouseDoubleClick">
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                    <StackPanel Orientation="Horizontal">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                        <!-- Файли -->
-                        <GroupBox Header="Файли" Margin="5">
-                            <StackPanel>
-                                <Button Style="{StaticResource FlatButton}" Click="NewFileBtn_Click" Content="Новий" Width="80"/>
-                                <Button Style="{StaticResource FlatButton}" Click="OpenFileBtn_Click" Content="Відкрити" Width="80"/>
-                                <Button Style="{StaticResource FlatButton}" Click="SaveFileBtn_Click" Content="Зберегти" Width="80"/>
-                            </StackPanel>
-                        </GroupBox>
+                        <!-- Лівий блок -->
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Left">
+                            <GroupBox Header="Файли" Margin="5">
+                                <StackPanel>
+                                    <Button Style="{StaticResource FlatButton}" Click="NewFileBtn_Click" Content="Новий" Width="80"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="OpenFileBtn_Click" Content="Відкрити" Width="80"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="SaveFileBtn_Click" Content="Зберегти" Width="80"/>
+                                </StackPanel>
+                            </GroupBox>
 
-                        <!-- Буфер обміну -->
-                        <GroupBox Header="Буфер обміну" Margin="5">
-                            <StackPanel>
-                                <Button Style="{StaticResource FlatButton}" Click="CutOutBtn" Content="Вирізати"  Width="80"/>
-                                <Button Style="{StaticResource FlatButton}" Click="CopyBtn"   Content="Копіювати" Width="80"/>
-                                <Button Style="{StaticResource FlatButton}" Click="InsertBtn" Content="Вставити"  Width="80"/>
-                            </StackPanel>
-                        </GroupBox>
+                            <GroupBox Header="Буфер обміну" Margin="5">
+                                <StackPanel>
+                                    <Button Style="{StaticResource FlatButton}" Click="CutOutBtn" Content="Вирізати"  Width="80"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="CopyBtn"   Content="Копіювати" Width="80"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="InsertBtn" Content="Вставити"  Width="80"/>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
 
-                        <!-- Шрифт -->
-                        <GroupBox Header="Шрифт" Margin="5">
-                            <StackPanel>
-                                <ComboBox Width="120" Name="FontFamilyBox" Margin="2"/>
-                                <ComboBox Width="60" Name="FontSizeBox" Margin="2"/>
-                                <WrapPanel>
-                                    <ToggleButton x:Name="BoldButton" Style="{StaticResource FlatToggleButton}" Content="B" FontWeight="Bold" Width="30"/>
-                                    <ToggleButton x:Name="ItalicButton" Style="{StaticResource FlatToggleButton}" Content="I" FontStyle="Italic" Width="30"/>
-                                    <ToggleButton x:Name="UnderlineButton" Style="{StaticResource FlatToggleButton}" Width="30">
-                                        <TextBlock Text="U" TextDecorations="Underline"/>
-                                    </ToggleButton>
-                                </WrapPanel>
-                            </StackPanel>
-                        </GroupBox>
+                        <!-- Центрований блок -->
+                        <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Center">
+                            <GroupBox Header="Шрифт" Margin="5">
+                                <StackPanel>
+                                    <ComboBox Width="120" Name="FontFamilyBox" Margin="2"/>
+                                    <ComboBox Width="60" Name="FontSizeBox" Margin="2"/>
+                                    <WrapPanel>
+                                        <ToggleButton x:Name="BoldButton" Style="{StaticResource FlatToggleButton}" Content="B" FontWeight="Bold" Width="30"/>
+                                        <ToggleButton x:Name="ItalicButton" Style="{StaticResource FlatToggleButton}" Content="I" FontStyle="Italic" Width="30"/>
+                                        <ToggleButton x:Name="UnderlineButton" Style="{StaticResource FlatToggleButton}" Width="30">
+                                            <TextBlock Text="U" TextDecorations="Underline"/>
+                                        </ToggleButton>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </GroupBox>
 
-                        <!-- Абзац -->
-                        <GroupBox Header="Абзац" Margin="5">
-                            <StackPanel>
-                                <WrapPanel>
-                                    <Button Style="{StaticResource FlatButton}" Click="LeftBtn" Content="Ліво" Width="40"/>
-                                    <Button Style="{StaticResource FlatButton}" Click="CenterBtn" Content="Центр" Width="50"/>
-                                    <Button Style="{StaticResource FlatButton}" Click="RightBtn" Content="Право" Width="50"/>
-                                    <Button Style="{StaticResource FlatButton}" Click="JustifyBtn" Content="Ширина" Width="60"/>
-                                </WrapPanel>
-                                <WrapPanel>
-                                    <Button Style="{StaticResource FlatButton}" Click="Bulleted_NumberingBtn" Content="●" Width="30"/>
-                                    <Button Style="{StaticResource FlatButton}" Click="Numerical_NumberingBtn" Content="1." Width="30"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </GroupBox>
+                            <GroupBox Header="Абзац" Margin="5">
+                                <StackPanel>
+                                    <WrapPanel>
+                                        <Button Style="{StaticResource FlatButton}" Click="LeftBtn" Content="Ліво" Width="40"/>
+                                        <Button Style="{StaticResource FlatButton}" Click="CenterBtn" Content="Центр" Width="50"/>
+                                        <Button Style="{StaticResource FlatButton}" Click="RightBtn" Content="Право" Width="50"/>
+                                        <Button Style="{StaticResource FlatButton}" Click="JustifyBtn" Content="Ширина" Width="60"/>
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <Button Style="{StaticResource FlatButton}" Click="Bulleted_NumberingBtn" Content="●" Width="30"/>
+                                        <Button Style="{StaticResource FlatButton}" Click="Numerical_NumberingBtn" Content="1." Width="30"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
 
-                        <!-- Вставлення -->
-                        <GroupBox Header="Вставлення" Margin="5">
-                            <StackPanel>
-                                <Button Style="{StaticResource FlatButton}" Click="Image_Click" Content="Зображення" Width="100"/>
-                                <Button Style="{StaticResource FlatButton}" Click="DateTime_Click" Content="Дата і час" Width="100"/>
-                                <Button Style="{StaticResource FlatButton}" Click="SpecialСharacter_Click" Content="Спец. символ" Width="100"/>
-                            </StackPanel>
-                        </GroupBox>
+                        <!-- Правий блок -->
+                        <StackPanel Orientation="Horizontal" Grid.Column="4" HorizontalAlignment="Right">
+                            <GroupBox Header="Вставлення" Margin="5">
+                                <StackPanel>
+                                    <Button Style="{StaticResource FlatButton}" Click="Image_Click" Content="Зображення" Width="100"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="DateTime_Click" Content="Дата і час" Width="100"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="SpecialСharacter_Click" Content="Спец. символ" Width="100"/>
+                                </StackPanel>
+                            </GroupBox>
 
-                        <!-- Вигляд -->
-                        <GroupBox Header="Вигляд" Margin="5">
-                            <StackPanel>
-                                <Button Style="{StaticResource FlatButton}" Click="Increase_Click"   Content="Збільшити" Width="90"/>
-                                <Button Style="{StaticResource FlatButton}" Click="Reduce_Click" Content="Зменшити" Width="90"/>
-                                <Button Style="{StaticResource FlatButton}" Click="Hide_Click" Content="Показати/Сховати панелі" Width="140"/>
-                            </StackPanel>
-                        </GroupBox>
-
-                    </StackPanel>
+                            <GroupBox Header="Вигляд" Margin="5">
+                                <StackPanel>
+                                    <Button Style="{StaticResource FlatButton}" Click="Increase_Click"   Content="Збільшити" Width="90"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="Reduce_Click" Content="Зменшити" Width="90"/>
+                                    <Button Style="{StaticResource FlatButton}" Click="Hide_Click" Content="Показати/Сховати панелі" Width="140"/>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </Grid>
                 </ScrollViewer>
             </TabItem>
         </TabControl>
 
-        <!-- Основна область з текстом -->
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -140,7 +157,6 @@
                          AcceptsTab="True"
                          SelectionChanged="Editor_SelectionChanged"/>
 
-            <!-- Статусбар -->
             <DockPanel Grid.Row="1" LastChildFill="True">
                 <StatusBar Name="MainStatusBar" DockPanel.Dock="Right" HorizontalAlignment="Right">
                     <StatusBarItem>
@@ -152,4 +168,3 @@
         </Grid>
     </DockPanel>
 </Window>
-
