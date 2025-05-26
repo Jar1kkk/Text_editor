@@ -50,18 +50,17 @@ namespace Based.UI
             Editor.TextChanged += UpdateStatusBar;
         }
 
+        //Шрифт
         private void FontFamilyBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (FontFamilyBox.SelectedItem is FontFamily ff)
                 Editor.Selection.ApplyPropertyValue(TextElement.FontFamilyProperty, ff);
         }
-
         private void FontSizeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (FontSizeBox.SelectedItem is double size)
                 Editor.Selection.ApplyPropertyValue(TextElement.FontSizeProperty, size);
         }
-
         private void BoldButton_Click(object sender, RoutedEventArgs e)
         {
             ToggleButton btn = (ToggleButton)sender;
@@ -71,7 +70,6 @@ namespace Based.UI
             Editor.Selection.ApplyPropertyValue(TextElement.FontWeightProperty, newWeight);
             btn.IsChecked = !isBold;
         }
-
         private void ItalicButton_Click(object sender, RoutedEventArgs e)
         {
             ToggleButton btn = (ToggleButton)sender;
@@ -81,7 +79,6 @@ namespace Based.UI
             Editor.Selection.ApplyPropertyValue(TextElement.FontStyleProperty, newStyle);
             btn.IsChecked = !isItalic;
         }
-
         private void UnderlineButton_Click(object sender, RoutedEventArgs e)
         {
             ToggleButton btn = (ToggleButton)sender;
@@ -91,7 +88,6 @@ namespace Based.UI
                 isUnderlined ? null : TextDecorations.Underline);
             btn.IsChecked = !isUnderlined;
         }
-
         private void Editor_SelectionChanged(object sender, RoutedEventArgs e)
         {
             object weight = Editor.Selection.GetPropertyValue(TextElement.FontWeightProperty);
@@ -109,6 +105,7 @@ namespace Based.UI
             if (sz is double s) FontSizeBox.SelectedItem = s;
         }
 
+        //Буфер обміну
         private void InsertBtn(object sender, RoutedEventArgs e)
         {
             if (!Clipboard.ContainsText())
@@ -155,6 +152,7 @@ namespace Based.UI
                 Editor.Selection.Text = "";
             }
         }
+
         //Статусбар
         private void UpdateStatusBar(object sender, RoutedEventArgs e)
         {
@@ -182,12 +180,12 @@ namespace Based.UI
 
             StatusText.Text = $"Символів: {CharCount} | Слів: {WordCount} | Рядок: {line}";
         }
+
         //Файли
         private void NewFileBtn_Click(object sender, RoutedEventArgs e)
         {
             Editor.Document.Blocks.Clear();
         }
-
         private void OpenFileBtn_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
@@ -206,7 +204,6 @@ namespace Based.UI
                 }
             }
         }
-
         private void SaveFileBtn_Click(object sender, RoutedEventArgs e)
         {
             var saveFileDialog = new SaveFileDialog
@@ -229,6 +226,7 @@ namespace Based.UI
             Editor.Selection.Text = "";
         }
 
+        //Абзац
         private void RightBtn(object sender, RoutedEventArgs e)
         {
             Editor.Selection.ApplyPropertyValue(Paragraph.TextAlignmentProperty, TextAlignment.Right);
@@ -246,6 +244,7 @@ namespace Based.UI
             Editor.Selection.ApplyPropertyValue(Paragraph.TextAlignmentProperty, TextAlignment.Center);
 
         }
+
         private void Bulleted_NumberingBtn(object sender, RoutedEventArgs e)
         {
             Number = 1;
@@ -262,6 +261,24 @@ namespace Based.UI
             Editor.CaretPosition = newParagraph.ContentEnd;
             Editor.Focus();
             Number++;
+        }
+
+        //Вигляд
+        private void Increase_Click(object sender, RoutedEventArgs e)
+        {
+            Editor.FontSize += 2;
+        }
+        private void Reduce_Click(object sender, RoutedEventArgs e)
+        {
+            Editor.FontSize -= 2;
+        }
+        private void Hide_Click(object sender, RoutedEventArgs e)
+        {
+            Tab.Height = 23;
+        }
+        private void Show_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            Tab.Height = 140;
         }
     }
 }

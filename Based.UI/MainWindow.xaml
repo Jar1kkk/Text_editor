@@ -49,8 +49,8 @@
     <DockPanel>
 
         <!-- Верхня стрічка -->
-        <TabControl DockPanel.Dock="Top" Height="140">
-            <TabItem Header="Головна">
+        <TabControl Name="Tab" DockPanel.Dock="Top" Height="140">
+            <TabItem Header="Головна" MouseDoubleClick="Show_MouseDoubleClick" >
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
                     <StackPanel Orientation="Horizontal">
 
@@ -115,9 +115,9 @@
                         <!-- Вигляд -->
                         <GroupBox Header="Вигляд" Margin="5">
                             <StackPanel>
-                                <Button Style="{StaticResource FlatButton}" Content="Збільшити" Width="90"/>
-                                <Button Style="{StaticResource FlatButton}" Content="Зменшити" Width="90"/>
-                                <Button Style="{StaticResource FlatButton}" Content="Показати/Сховати панелі" Width="140"/>
+                                <Button Style="{StaticResource FlatButton}" Click="Increase_Click"   Content="Збільшити" Width="90"/>
+                                <Button Style="{StaticResource FlatButton}" Click="Reduce_Click" Content="Зменшити" Width="90"/>
+                                <Button Style="{StaticResource FlatButton}" Click="Hide_Click" Content="Показати/Сховати панелі" Width="140"/>
                             </StackPanel>
                         </GroupBox>
 
