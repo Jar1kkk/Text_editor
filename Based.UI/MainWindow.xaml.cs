@@ -2,8 +2,10 @@
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,11 +25,17 @@ namespace Based.UI
 {
     public partial class MainWindow : Window
     {
+        // Для нумерованого списку
         private int Number = 1;
 
-        private string Text = "";
+        // Для буферу обміну
+        private string Text = null;
+
+        // Для збереження шляху до файлу
         private string FileName = "";
-        private string SaveFileText;
+
+        // Для збереження тексту для перевірки змін
+        private string SaveFileText = "";
 
         public MainWindow()
         {
@@ -55,7 +63,10 @@ namespace Based.UI
             Editor.SelectionChanged += UpdateStatusBar;
             Editor.TextChanged += UpdateStatusBar;
 
+            // Відкриття файлу при запуску програми
             OpenFileAtStartup();
+
+            // Підписатися на події при закритті вікна
             this.Closing += Editor_Closing;
         }
 
@@ -117,46 +128,52 @@ namespace Based.UI
         //Буфер обміну
         private void InsertBtn(object sender, RoutedEventArgs e)
         {
-            if (!Clipboard.ContainsText())
+            string insertText = null;
+
+            if (!string.IsNullOrEmpty(Text))
+            {
+                insertText = Text;
+                Text = null;
+                Clipboard.SetText("");
+            }
+            else if (Clipboard.ContainsText())
+            {
+                insertText = Clipboard.GetText();
+            }
+
+            if (string.IsNullOrWhiteSpace(insertText))
                 return;
-
-            string clipboardText = Clipboard.GetText();
-
 
             if (!Editor.Selection.IsEmpty)
             {
-                Editor.Selection.Text = clipboardText;
-                string text = Clipboard.GetText();
-                if (Text == text)
-                    Clipboard.SetText("");
-
+                Editor.Selection.Text = insertText;
             }
             else
             {
-
-                Editor.CaretPosition.InsertTextInRun(clipboardText);
+                Editor.CaretPosition.InsertTextInRun(insertText);
             }
         }
         private void CopyBtn(object sender, RoutedEventArgs e)
         {
-            try
+            string selectedText = Editor.Selection.Text;
+            if (!string.IsNullOrEmpty(selectedText))
             {
-                if (Editor.Selection != null && !string.IsNullOrEmpty(Editor.Selection.Text))
+                try
                 {
-                    Clipboard.SetText(Editor.Selection.Text);
+                    Clipboard.SetText(selectedText);
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
         private void CutOutBtn(object sender, RoutedEventArgs e)
         {
-            if (Editor.Selection != null && !string.IsNullOrEmpty(Editor.Selection.Text))
+            string selectedText = Editor.Selection.Text;
+            if (!string.IsNullOrEmpty(selectedText))
             {
-                Clipboard.SetText(Editor.Selection.Text);
-                Text = Editor.Selection.Text;
+                Text = selectedText;
                 Editor.Selection.Text = "";
             }
         }
@@ -203,7 +220,7 @@ namespace Based.UI
             if (openFileDialog.ShowDialog() == true)
             {
                 var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
-                
+
                 using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open))
                 {
                     FileName = openFileDialog.FileName;
@@ -283,17 +300,11 @@ namespace Based.UI
         //Вигляд
         private void Increase_Click(object sender, RoutedEventArgs e)
         {
-            if (Editor.FontSize >= 72)
-                return;
-
-            Editor.FontSize += 2;
+            RichFontSize(2);        
         }
         private void Reduce_Click(object sender, RoutedEventArgs e)
         {
-            if (Editor.FontSize <= 8)
-                return;
-
-            Editor.FontSize -= 2;
+            RichFontSize(-2);
         }
         private void Hide_Click(object sender, RoutedEventArgs e)
         {
@@ -428,5 +439,20 @@ namespace Based.UI
                 }
             }
         }
-    }
+        // Змінення розміру тексту
+        private void RichFontSize(int size)
+        {
+            double newSize = Editor.FontSize + size;
+
+            if (newSize < 8)
+                newSize = 8;
+            else if (newSize > 72)
+                newSize = 72;
+
+            TextRange fullRange = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+            fullRange.ApplyPropertyValue(TextElement.FontSizeProperty, newSize);
+
+            Editor.FontSize = newSize;
+        }
+    } 
 }
