@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -54,6 +55,7 @@ namespace Based.UI
             Editor.TextChanged += UpdateStatusBar;
 
             OpenFileAtStartup();
+            this.Closing += Editor_Closing;
         }
 
         //Шрифт
@@ -384,6 +386,22 @@ namespace Based.UI
                 {
                     writer.WriteLine(FileName);
                 }
+            }
+        }
+        // Закриття редактора з підтвердженням збереження змін
+        private void Editor_Closing(object? sender, CancelEventArgs e)
+        {
+            var result = MessageBox.Show("Ви хочете зберегти зміни?",
+                                         "Мій редактор",
+                                         MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.No)
+            {
+                e.Cancel = true;
+            }
+            if (result == MessageBoxResult.Yes)
+            {
+                SaveFileBtn_Click(sender, null);
             }
         }
     }
