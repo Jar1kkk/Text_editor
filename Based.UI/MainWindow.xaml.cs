@@ -27,6 +27,7 @@ namespace Based.UI
 
         private string Text = "";
         private string FileName = "";
+        private string SaveFileText;
 
         public MainWindow()
         {
@@ -138,13 +139,12 @@ namespace Based.UI
         }
         private void CopyBtn(object sender, RoutedEventArgs e)
         {
-            if (Editor.Selection != null && !string.IsNullOrEmpty(Editor.Selection.Text))
-            {
-                Clipboard.SetText(Editor.Selection.Text);
-            }
             try
             {
-                Clipboard.SetText(Editor.Selection.Text);
+                if (Editor.Selection != null && !string.IsNullOrEmpty(Editor.Selection.Text))
+                {
+                    Clipboard.SetText(Editor.Selection.Text);
+                }
             }
             catch (Exception ex)
             {
@@ -203,6 +203,7 @@ namespace Based.UI
             if (openFileDialog.ShowDialog() == true)
             {
                 var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+                
                 using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open))
                 {
                     FileName = openFileDialog.FileName;
@@ -213,6 +214,7 @@ namespace Based.UI
                     else
                         range.Load(fs, DataFormats.Text);
                 }
+                SaveFileText = SaveMemory(range);
             }
         }
         private void SaveFileBtn_Click(object sender, RoutedEventArgs e)
@@ -224,6 +226,7 @@ namespace Based.UI
             if (saveFileDialog.ShowDialog() == true)
             {
                 var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+                SaveFileText = SaveMemory(range);
                 using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
                 {
                     FileName = saveFileDialog.FileName;
@@ -287,7 +290,7 @@ namespace Based.UI
         }
         private void Reduce_Click(object sender, RoutedEventArgs e)
         {
-            if(Editor.FontSize <= 8)
+            if (Editor.FontSize <= 8)
                 return;
 
             Editor.FontSize -= 2;
@@ -357,13 +360,18 @@ namespace Based.UI
 
             FileName = Reading();
             var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
-            using (FileStream fs = new FileStream(FileName, FileMode.Open))
+            SaveFileText = range.Text;
+            if (File.Exists(FileName))
             {
+                using (FileStream fs = new FileStream(FileName, FileMode.Open))
+                {
 
-                if (System.IO.Path.GetExtension(FileName).ToLower() == ".rtf")
-                    range.Load(fs, DataFormats.Rtf);
-                else
-                    range.Load(fs, DataFormats.Text);
+                    if (System.IO.Path.GetExtension(FileName).ToLower() == ".rtf")
+                        range.Load(fs, DataFormats.Rtf);
+                    else
+                        range.Load(fs, DataFormats.Text);
+                }
+                SaveFileText = SaveMemory(range);
             }
         }
         //Читання шляху файлу з файлу,
@@ -388,20 +396,36 @@ namespace Based.UI
                 }
             }
         }
-        // Закриття редактора з підтвердженням збереження змін
+        // Закриття редактора з підтвердженням збереження змін а якщо користувач нічого не змінив, то просто закриваємо.
         private void Editor_Closing(object? sender, CancelEventArgs e)
         {
+            var range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+
+            string text = SaveMemory(range);
+            if (SaveFileText == text)
+                return;
+
             var result = MessageBox.Show("Ви хочете зберегти зміни?",
                                          "Мій редактор",
                                          MessageBoxButton.YesNo);
 
-            if (result == MessageBoxResult.No)
-            {
-                e.Cancel = true;
-            }
             if (result == MessageBoxResult.Yes)
             {
                 SaveFileBtn_Click(sender, null);
+            }
+        }
+        // Збереження тексту в пам'ять для перевіркі чи змінив користувач текст наприклад стиль тексту.
+        private string SaveMemory(TextRange text)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                text.Save(ms, DataFormats.Rtf);
+                ms.Position = 0;
+
+                using (StreamReader reader = new StreamReader(ms))
+                {
+                    return reader.ReadToEnd();
+                }
             }
         }
     }
